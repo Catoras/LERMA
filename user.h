@@ -7,7 +7,7 @@ class User
 private:
     QString username;
     QString email;
-    QString passsword;
+    QString password;
 
 public:
     User();
@@ -15,8 +15,8 @@ public:
     void setUsername(const QString &value);
     QString getEmail() const;
     void setEmail(const QString &value);
-    QString getPasssword() const;
-    void setPasssword(const QString &value);
+    QString getPassword() const;
+    void setPassword(const QString &value);
 };
 
 #endif // USER_H

@@ -6,10 +6,15 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    openFileAction = new QAction("&Open Database", this);
+    connect(openFileAction, SIGNAL(triggered()), this, SLOT(openFile()));
+    ui->menubar->addMenu("&File")->addAction(openFileAction);
 }
 
 MainWindow::~MainWindow()
 {
+    saveDB();
     delete ui;
 }
 
@@ -28,8 +33,7 @@ void MainWindow::enableSignInPB()
 {
     if(ui->newUserLE->text().length() and
             ui->newPasswordLE->text().length() and
-            ui->emailLE->text().length()){
-
+            is_email_valid(ui->emailLE->text().toStdString())){
         ui->signInPB->setEnabled(true);
     }
     else{
@@ -46,7 +50,7 @@ void MainWindow::validateUser()
 
     it = find_if(users.begin(),users.end(),[&user, &password] (User lambdauser) -> bool
     {
-        return lambdauser.getUsername()==user && lambdauser.getPasssword() == password;
+        return lambdauser.getUsername()==user && lambdauser.getPassword() == password;
     });
 
     if(it == users.end()){
@@ -58,6 +62,49 @@ void MainWindow::validateUser()
         message.setText("Welcome to Lerma "+ user);
         ui->viewSW->setCurrentIndex(1);
         message.exec();
+    }
+}
+
+bool MainWindow::is_email_valid(const string &email)
+{
+    const std::regex pattern("(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+");
+    return std::regex_match(email, pattern);
+}
+
+void MainWindow::saveDB()
+{
+    QJsonObject jsonObj;
+    QJsonDocument jsonDoc;
+
+    jsonObj["users"] = dbArray;
+    jsonDoc = QJsonDocument(jsonObj);
+
+    dbFile.open(QIODevice::WriteOnly);
+    dbFile.write(jsonDoc.toJson());
+    dbFile.close();
+}
+
+void MainWindow::loadDB()
+{
+    QJsonObject jsonObj;
+    QJsonDocument jsonDoc;
+    QByteArray data;
+
+    dbFile.open(QIODevice::ReadOnly);
+    data = dbFile.readAll();
+    dbFile.close();
+
+    jsonDoc = QJsonDocument::fromJson(data);
+    jsonObj = jsonDoc.object();
+    dbArray = jsonObj["users"].toArray();
+
+    for(int i=0; i < dbArray.size(); i++){
+        User user;
+        QJsonObject obj = dbArray[i].toObject();
+        user.setUsername(obj["name"].toString());
+        user.setEmail(obj["email"].toString());
+        user.setPassword(obj["password"].toString());
+        users.push_back(user);
     }
 }
 
@@ -94,17 +141,40 @@ void MainWindow::on_newUserLE_textChanged(const QString &arg1)
 
 void MainWindow::on_signInPB_clicked()
 {
+    QJsonObject jsonObj;
     QMessageBox message;
     User user;
+    vector<User>::iterator it;
+    QString email;
+    QString username;
 
     user.setUsername(ui->newUserLE->text());
     user.setEmail(ui->emailLE->text());
-    user.setPasssword(ui->newPasswordLE->text());
+    user.setPassword(ui->newPasswordLE->text());
 
-    users.push_back(user);
+    username = user.getUsername();
+    email = user.getEmail();
 
-    message.setText("New user created.");
-    message.exec();
+    it = find_if(users.begin(),users.end(),[&username, &email] (User lambdauser) -> bool
+    {
+        return lambdauser.getUsername()==username || lambdauser.getEmail() == email;
+    });
+
+    if(it == users.end()){
+        users.push_back(user);
+
+        message.setText("New user created.");
+        message.exec();
+
+        jsonObj["name"]=user.getUsername();
+        jsonObj["email"]=user.getEmail();
+        jsonObj["password"]=user.getPassword();
+        dbArray.append(jsonObj);
+    }
+    else{
+        message.setText("Nombre o correo no disponible.");
+        message.exec();
+    }
 
     ui->newUserLE->clear();
     ui->emailLE->clear();
@@ -117,4 +187,16 @@ void MainWindow::on_loginPB_clicked()
 
     ui->usernameLE->clear();
     ui->passwordLE->clear();
+}
+
+void MainWindow::openFile()
+{
+    QString name;
+    name = QFileDialog::getOpenFileName(this, "Select Database","","JSON files (*.json)");
+    if (name.length()){
+        dbFile.setFileName(name);
+        ui->loginGB->setEnabled(true);
+        ui->signInGB->setEnabled(true);
+        loadDB();
+    }
 }

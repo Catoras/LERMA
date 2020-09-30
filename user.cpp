@@ -20,14 +20,14 @@ void User::setEmail(const QString &value)
     email = value;
 }
 
-QString User::getPasssword() const
+QString User::getPassword() const
 {
-    return passsword;
+    return password;
 }
 
-void User::setPasssword(const QString &value)
+void User::setPassword(const QString &value)
 {
-    passsword = value;
+    password = value;
 }
 
 User::User()
