@@ -10,6 +10,9 @@ MainWindow::MainWindow(QWidget *parent)
     openFileAction = new QAction("&Open Database", this);
     connect(openFileAction, SIGNAL(triggered()), this, SLOT(openFile()));
     ui->menubar->addMenu("&File")->addAction(openFileAction);
+    //Combobox
+    for (string department : departments)
+        ui->comboBoxDepartamentos->addItem(QString::fromStdString(department));
 }
 
 MainWindow::~MainWindow()
@@ -61,9 +64,34 @@ void MainWindow::validateUser()
     else{
         message.setText("Welcome to Lerma "+ user);
         ui->viewSW->setCurrentIndex(1);
+        ui->menubar->setVisible(0);
+        printitems(products);
+
         message.exec();
+
     }
 }
+
+void MainWindow::printitems(vector<Product> &array)
+{
+    QWidget *central = new QWidget;
+    QGridLayout *layout = new QGridLayout(central);
+    ui->scrollAreaProductos->setWidget(central);
+    ui->scrollAreaProductos->setWidgetResizable(true);
+
+    int row=0;
+    int column=0;
+    for(int i = 0; i< array.size();i++){
+       productwidget *product= new productwidget(this,
+        array[i].getId(),array[i].getName(),array[i].getPrice());
+       layout->addWidget(product,row,column++);
+       if(column == 4){
+           column=0;
+           row++;
+       }
+    }
+}
+
 
 bool MainWindow::is_email_valid(const string &email)
 {
@@ -77,6 +105,9 @@ void MainWindow::saveDB()
     QJsonDocument jsonDoc;
 
     jsonObj["users"] = dbArray;
+    jsonObj["products"]= dbProductsArray;
+
+
     jsonDoc = QJsonDocument(jsonObj);
 
     dbFile.open(QIODevice::WriteOnly);
@@ -97,6 +128,7 @@ void MainWindow::loadDB()
     jsonDoc = QJsonDocument::fromJson(data);
     jsonObj = jsonDoc.object();
     dbArray = jsonObj["users"].toArray();
+    dbProductsArray=jsonObj["products"].toArray();
 
     for(int i=0; i < dbArray.size(); i++){
         User user;
@@ -106,7 +138,18 @@ void MainWindow::loadDB()
         user.setPassword(obj["password"].toString());
         users.push_back(user);
     }
+
+    for(int i=0; i < dbProductsArray.size(); i++){
+        Product product;
+        QJsonObject obj = dbProductsArray[i].toObject();
+        product.setId(obj["id"].toString());
+        product.setName(obj["name"].toString());
+        product.setPrice(obj["price"].toDouble());
+        products.push_back(product);
+    }
 }
+
+
 
 
 void MainWindow::on_usernameLE_textChanged(const QString &arg1)
@@ -199,4 +242,42 @@ void MainWindow::openFile()
         ui->signInGB->setEnabled(true);
         loadDB();
     }
+}
+
+void MainWindow::on_comboBoxDepartamentos_activated(const QString &arg1)
+{
+    if(arg1=="Todos los departamentos"){
+        printitems(products);
+    }
+    else if(arg1=="Alimentos y Bebidas"){
+        vector<Product> filteredproductsAB;
+        copy_if(products.begin(), products.end(), std::back_inserter(filteredproductsAB), [](const Product& c)
+        { return c.getId()[0]=="A" && c.getId()[1]=="B"; });
+        printitems(filteredproductsAB);
+    }
+    else if(arg1=="Libros"){
+        vector<Product> filteredproductsL;
+        copy_if(products.begin(), products.end(), std::back_inserter(filteredproductsL), [](const Product& c)
+        { return c.getId()[0]=="L"; });
+        printitems(filteredproductsL);
+    }
+    else if(arg1=="Electrónicos"){
+        vector<Product> filteredproductsE;
+        copy_if(products.begin(), products.end(), std::back_inserter(filteredproductsE), [](const Product& c)
+        { return c.getId()[0]=="E"; });
+        printitems(filteredproductsE);
+    }
+    else if(arg1=="Hogar Y Cocina"){
+        vector<Product> filteredproductsHC;
+        copy_if(products.begin(), products.end(), std::back_inserter(filteredproductsHC), [](const Product& c)
+        { return c.getId()[0]=="H" && c.getId()[1]=="C"; });
+        printitems(filteredproductsHC);
+    }
+    else if(arg1=="Deporte y Aire Libre"){
+        vector<Product> filteredproductsD;
+        copy_if(products.begin(), products.end(), std::back_inserter(filteredproductsD), [](const Product& c)
+        { return c.getId()[0]=="D"; });
+        printitems(filteredproductsD);
+    }
+    else{}
 }

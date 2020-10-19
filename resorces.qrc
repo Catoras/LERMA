@@ -1,0 +1,55 @@
+<RCC>
+    <qresource prefix="/Icon"/>
+    <qresource prefix="/Images">
+        <file>Resources/imgs/AB01.jpg</file>
+        <file>Resources/imgs/AB02.jpg</file>
+        <file>Resources/imgs/AB03.jpg</file>
+        <file>Resources/imgs/AB04.jpg</file>
+        <file>Resources/imgs/AB05.jpg</file>
+        <file>Resources/imgs/AB06.jpg</file>
+        <file>Resources/imgs/AB07.jpg</file>
+        <file>Resources/imgs/AB08.jpg</file>
+        <file>Resources/imgs/AB09.jpg</file>
+        <file>Resources/imgs/AB10.jpg</file>
+        <file>Resources/imgs/D01.jpg</file>
+        <file>Resources/imgs/D02.jpg</file>
+        <file>Resources/imgs/D03.jpg</file>
+        <file>Resources/imgs/D04.jpg</file>
+        <file>Resources/imgs/D05.jpg</file>
+        <file>Resources/imgs/D06.jpg</file>
+        <file>Resources/imgs/D07.jpg</file>
+        <file>Resources/imgs/D08.jpg</file>
+        <file>Resources/imgs/D09.jpg</file>
+        <file>Resources/imgs/D10.jpg</file>
+        <file>Resources/imgs/E01.jpg</file>
+        <file>Resources/imgs/E02.jpg</file>
+        <file>Resources/imgs/E03.jpg</file>
+        <file>Resources/imgs/E04.jpg</file>
+        <file>Resources/imgs/E05.jpg</file>
+        <file>Resources/imgs/E06.jpg</file>
+        <file>Resources/imgs/E07.jpg</file>
+        <file>Resources/imgs/E08.jpg</file>
+        <file>Resources/imgs/E09.jpg</file>
+        <file>Resources/imgs/E10.jpg</file>
+        <file>Resources/imgs/HC01.jpg</file>
+        <file>Resources/imgs/HC02.jpg</file>
+        <file>Resources/imgs/HC03.jpg</file>
+        <file>Resources/imgs/HC04.jpg</file>
+        <file>Resources/imgs/HC05.jpg</file>
+        <file>Resources/imgs/HC06.jpg</file>
+        <file>Resources/imgs/HC07.jpg</file>
+        <file>Resources/imgs/HC08.jpg</file>
+        <file>Resources/imgs/HC09.jpg</file>
+        <file>Resources/imgs/HC10.jpg</file>
+        <file>Resources/imgs/L01.jpg</file>
+        <file>Resources/imgs/L02.jpg</file>
+        <file>Resources/imgs/L03.jpg</file>
+        <file>Resources/imgs/L04.jpg</file>
+        <file>Resources/imgs/L05.jpg</file>
+        <file>Resources/imgs/L06.jpg</file>
+        <file>Resources/imgs/L07.jpg</file>
+        <file>Resources/imgs/L08.jpg</file>
+        <file>Resources/imgs/L09.jpg</file>
+        <file>Resources/imgs/L10.jpg</file>
+    </qresource>
+</RCC>

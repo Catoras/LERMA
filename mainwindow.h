@@ -1,6 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "productwidget.h"
+#include "product.h"
+
 #include <QMainWindow>
 #include <QMessageBox>
 #include <vector>
@@ -12,6 +15,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <string.h>
+
+#include <QDebug>
 
 using namespace std;
 
@@ -44,14 +50,29 @@ private slots:
 
     void openFile();
 
+    void on_comboBoxDepartamentos_activated(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     vector<User> users;
     QAction* openFileAction;
     QFile dbFile;
     QJsonArray dbArray;
-
-
+    QJsonArray dbProductsArray;
+    string departments[6]{"Todos los departamentos",
+                          "Alimentos y Bebidas",
+                          "Libros",
+                          "Electrónicos",
+                          "Hogar Y Cocina",
+                          "Deporte y Aire Libre"};
+    vector<Product> products;
+/*
+    AB - Alimentos y Bebidas
+    L - Libros
+    E - Electrónicos
+    HC - Hogar Y Cocina
+    D - Deporte y Aire Libre
+*/
     void enableLoginPB();
     void enableSignInPB();
     void validateUser();
@@ -59,5 +80,6 @@ private:
 
     void saveDB();
     void loadDB();
+    void printitems(vector<Product> &array);
 };
 #endif // MAINWINDOW_H
