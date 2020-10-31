@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent)
     //Combobox
     for (string department : departments)
         ui->comboBoxDepartamentos->addItem(QString::fromStdString(department));
+    for(string sort : sorts)
+        ui->comboBoxOrdenamiento->addItem(QString::fromStdString(sort));
 }
 
 MainWindow::~MainWindow()
@@ -149,6 +151,53 @@ void MainWindow::loadDB()
     }
 }
 
+void MainWindow::productfilter()
+{
+    QString arg1 = ui->comboBoxDepartamentos->currentText();
+    QString arg2 = ui->comboBoxOrdenamiento->currentText();
+    QString arg3 = ui->lineEditBusqueda->text();
+    vector<Product> filteredproducts;
+
+    if(arg1==QString::fromStdString(departments[0])){
+        copy_if(products.begin(), products.end(), std::back_inserter(filteredproducts), [arg3](const Product& c)
+        { return c.getName().toLower().toStdString().find(arg3.toLower().toStdString()) != string::npos; });
+    }
+    else if(arg1==QString::fromStdString(departments[1])){
+        copy_if(products.begin(), products.end(), std::back_inserter(filteredproducts), [arg3](const Product& c)
+        { return c.getId()[0]=="A" && c.getId()[1]=="B" && c.getName().toLower().toStdString().find(arg3.toLower().toStdString()) != string::npos; });
+    }
+    else if(arg1==QString::fromStdString(departments[2])){
+        copy_if(products.begin(), products.end(), std::back_inserter(filteredproducts), [arg3](const Product& c)
+        { return c.getId()[0]=="L" && c.getName().toLower().toStdString().find(arg3.toLower().toStdString()) != string::npos; });
+    }
+    else if(arg1==QString::fromStdString(departments[3])){
+        copy_if(products.begin(), products.end(), std::back_inserter(filteredproducts), [arg3](const Product& c)
+        { return c.getId()[0]=="E" && c.getName().toLower().toStdString().find(arg3.toLower().toStdString()) != string::npos; });
+    }
+    else if(arg1==QString::fromStdString(departments[4])){
+        copy_if(products.begin(), products.end(), std::back_inserter(filteredproducts), [arg3](const Product& c)
+        { return c.getId()[0]=="H" && c.getId()[1]=="C" && c.getName().toLower().toStdString().find(arg3.toLower().toStdString()) != string::npos; });
+    }
+    else if(arg1==QString::fromStdString(departments[5])){
+        copy_if(products.begin(), products.end(), std::back_inserter(filteredproducts), [arg3](const Product& c)
+        { return c.getId()[0]=="D" && c.getName().toLower().toStdString().find(arg3.toLower().toStdString()) != string::npos; });
+    }
+    else{}
+
+    sort(filteredproducts.begin(), filteredproducts.end(),
+        [arg2](const Product & a, const Product & b) -> bool
+    {
+        if(arg2=="Ascendente"){
+            return a.getPrice() > b.getPrice();
+        }
+        else if(arg2=="Descendente"){
+            return a.getPrice() < b.getPrice();
+        }
+        else{}
+    });
+    printitems(filteredproducts);
+}
+
 
 
 
@@ -246,38 +295,15 @@ void MainWindow::openFile()
 
 void MainWindow::on_comboBoxDepartamentos_activated(const QString &arg1)
 {
-    if(arg1=="Todos los departamentos"){
-        printitems(products);
-    }
-    else if(arg1=="Alimentos y Bebidas"){
-        vector<Product> filteredproductsAB;
-        copy_if(products.begin(), products.end(), std::back_inserter(filteredproductsAB), [](const Product& c)
-        { return c.getId()[0]=="A" && c.getId()[1]=="B"; });
-        printitems(filteredproductsAB);
-    }
-    else if(arg1=="Libros"){
-        vector<Product> filteredproductsL;
-        copy_if(products.begin(), products.end(), std::back_inserter(filteredproductsL), [](const Product& c)
-        { return c.getId()[0]=="L"; });
-        printitems(filteredproductsL);
-    }
-    else if(arg1=="Electrónicos"){
-        vector<Product> filteredproductsE;
-        copy_if(products.begin(), products.end(), std::back_inserter(filteredproductsE), [](const Product& c)
-        { return c.getId()[0]=="E"; });
-        printitems(filteredproductsE);
-    }
-    else if(arg1=="Hogar Y Cocina"){
-        vector<Product> filteredproductsHC;
-        copy_if(products.begin(), products.end(), std::back_inserter(filteredproductsHC), [](const Product& c)
-        { return c.getId()[0]=="H" && c.getId()[1]=="C"; });
-        printitems(filteredproductsHC);
-    }
-    else if(arg1=="Deporte y Aire Libre"){
-        vector<Product> filteredproductsD;
-        copy_if(products.begin(), products.end(), std::back_inserter(filteredproductsD), [](const Product& c)
-        { return c.getId()[0]=="D"; });
-        printitems(filteredproductsD);
-    }
-    else{}
+    productfilter();
+}
+
+void MainWindow::on_comboBoxOrdenamiento_activated(const QString &arg1)
+{
+    productfilter();
+}
+
+void MainWindow::on_lineEditBusqueda_textChanged(const QString &arg1)
+{
+    productfilter();
 }

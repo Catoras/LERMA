@@ -52,6 +52,10 @@ private slots:
 
     void on_comboBoxDepartamentos_activated(const QString &arg1);
 
+    void on_comboBoxOrdenamiento_activated(const QString &arg1);
+
+    void on_lineEditBusqueda_textChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     vector<User> users;
@@ -73,6 +77,9 @@ private:
     HC - Hogar Y Cocina
     D - Deporte y Aire Libre
 */
+    string sorts[3]{"Ordenar",
+                    "Ascendente",
+                    "Descendente"};
     void enableLoginPB();
     void enableSignInPB();
     void validateUser();
@@ -80,6 +87,7 @@ private:
 
     void saveDB();
     void loadDB();
+    void productfilter();
     void printitems(vector<Product> &array);
 };
 #endif // MAINWINDOW_H

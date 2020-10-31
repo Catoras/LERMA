@@ -144,10 +144,20 @@
       </widget>
       <widget class="QWidget" name="page_2">
        <layout class="QGridLayout" name="gridLayout_5">
-        <item row="0" column="0">
+        <item row="0" column="2">
+         <widget class="QComboBox" name="comboBoxOrdenamiento"/>
+        </item>
+        <item row="0" column="1">
          <widget class="QComboBox" name="comboBoxDepartamentos"/>
         </item>
-        <item row="1" column="0">
+        <item row="0" column="0">
+         <widget class="QLineEdit" name="lineEditBusqueda">
+          <property name="placeholderText">
+           <string>Buscar</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="3">
          <widget class="QScrollArea" name="scrollAreaProductos">
           <property name="widgetResizable">
            <bool>true</bool>
