@@ -6,7 +6,6 @@
 
 #include <QMainWindow>
 #include <QMessageBox>
-#include <vector>
 #include "user.h"
 #include <regex>
 #include <QAction>
@@ -16,10 +15,13 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <string.h>
+#include <QObject>
 
 #include <QDebug>
 
-using namespace std;
+#include <QDateTime>
+
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -56,6 +58,10 @@ private slots:
 
     void on_lineEditBusqueda_textChanged(const QString &arg1);
 
+    void addToChart(QString productID,int amount);
+
+    void updatemain_user();
+
 private:
     Ui::MainWindow *ui;
     vector<User> users;
@@ -63,6 +69,7 @@ private:
     QFile dbFile;
     QJsonArray dbArray;
     QJsonArray dbProductsArray;
+    User main_user;
     string departments[6]{"Todos los departamentos",
                           "Alimentos y Bebidas",
                           "Libros",
@@ -80,6 +87,8 @@ private:
     string sorts[3]{"Ordenar",
                     "Ascendente",
                     "Descendente"};
+
+    Purchase actual_purchase;
     void enableLoginPB();
     void enableSignInPB();
     void validateUser();

@@ -1,7 +1,7 @@
 #ifndef PRODUCT_H
 #define PRODUCT_H
 #include <QString>
-
+using namespace std;
 
 class Product
 {
@@ -9,6 +9,7 @@ private:
     QString id;
     QString name;
     float price;
+
 public:
     Product();
     QString getId() const;
@@ -17,6 +18,7 @@ public:
     void setName(const QString &value);
     float getPrice() const;
     void setPrice(float value);
+
 };
 
 #endif // PRODUCT_H

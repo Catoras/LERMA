@@ -19,13 +19,17 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     product.cpp \
+    product_from_purchase.cpp \
     productwidget.cpp \
+    purchase.cpp \
     user.cpp
 
 HEADERS += \
     mainwindow.h \
     product.h \
+    product_from_purchase.h \
     productwidget.h \
+    purchase.h \
     user.h
 
 FORMS += \

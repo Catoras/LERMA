@@ -30,7 +30,22 @@ void User::setPassword(const QString &value)
     password = value;
 }
 
+vector<Purchase> User::getPurchase() const
+{
+    return purchase;
+}
+
+void User::setPurchase(const vector<Purchase> &value)
+{
+    purchase = value;
+}
+
+void User::addpurchase(Purchase purchase)
+{
+    this->purchase.push_back(purchase);
+}
+
 User::User()
 {
-
+    
 }
