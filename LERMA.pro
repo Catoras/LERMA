@@ -25,6 +25,7 @@ SOURCES += \
     user.cpp
 
 HEADERS += \
+    Graph.h \
     mainwindow.h \
     product.h \
     product_from_purchase.h \

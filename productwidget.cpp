@@ -8,11 +8,10 @@ productwidget::productwidget(QWidget *parent) :
     ui(new Ui::productwidget)
 {
     ui->setupUi(this);
-    QPixmap pic(":/Images/Resources/imgs/AB01.jpg");
+    QPixmap pic(":/Images/Resources/imgs/test.jpg");
     ui->label->setPixmap(pic);
-    ui->label_2->setText("Camara Nikon FNAF230989 SUPER ESCALABLE GO PARA LLEVAR");
+    ui->label_2->setText("Lorem ipsum dolor sit amet");
     ui->label_3->setText("$3000");
-    ui->groupBox->setStyleSheet("QGroupBox{border:2px solid gray;border-radius:5px");
 
 }
 

@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    updatemain_user();
+    update_main_user();
     saveDB();
     delete ui;
 }
@@ -70,8 +70,8 @@ void MainWindow::validateUser()
         message.exec();
     }
     else{
-        message.setText("Welcome to Lerma "+ user_find.getUsername());
         main_user=user_find;
+        message.setText("Welcome to Lerma "+ main_user.getUsername());
         ui->viewSW->setCurrentIndex(1);
         ui->menubar->setVisible(0);
         printitems(products);
@@ -139,25 +139,28 @@ void MainWindow::loadDB()
         user.setEmail(obj["email"].toString());
         user.setPassword(obj["password"].toString());
         QJsonArray arraypurchase= obj["purchase"].toArray();
-//        vector <Purchase> aux;
         for(int j=0; j < arraypurchase.size(); j++){
             Purchase purchase;
             QJsonObject compra = arraypurchase[j].toObject();
             QStringList attributes=compra.keys();
             purchase.setTimestamp(attributes.at(0));
             QJsonArray arrayproduct_from_purchase= compra[attributes.at(0)].toArray();
+            vector <string> id_from_all_products_from_purchase;
             for(int z=0; z < arrayproduct_from_purchase.size(); z++){
                 Product_From_Purchase product_from_purchase;
                 QJsonObject producto_de_la_compra = arrayproduct_from_purchase[z].toObject();
                 product_from_purchase.setId(producto_de_la_compra["id"].toString());
                 product_from_purchase.setUnits(producto_de_la_compra["units"].toInt());
                 purchase.addproduct(product_from_purchase);
+                id_from_all_products_from_purchase.push_back(product_from_purchase.getId().toStdString());
+
             }
             user.addpurchase(purchase);
+            shopping_network.createEdgesFromAVector(id_from_all_products_from_purchase);
         }
-//        user.setPurchase(aux);
         users.push_back(user);
     }
+    shopping_network.printData();
 
     for(int i=0; i < dbProductsArray.size(); i++){
         Product product;
@@ -337,21 +340,18 @@ void MainWindow::addToChart(QString productID, int amount)
     actual_purchase.setTimestamp(timestamp.toString());
 }
 
-void MainWindow::updatemain_user()
+void MainWindow::update_main_user()
 {
-    QString email=main_user.getEmail();
-    QString username=main_user.getUsername();
-
     for(int i=0; i < dbArray.size(); i++){
         QJsonObject obj = dbArray[i].toObject();
-        if(email==obj["email"].toString() and username==obj["name"].toString()){
+        if(main_user.getEmail()==obj["email"].toString() and
+                main_user.getUsername()==obj["name"].toString()){
             dbArray.removeAt(i);
             break;
         }
-
     }
-
-    main_user.addpurchase(actual_purchase);
+    if(actual_purchase.getChart().size())
+        main_user.addpurchase(actual_purchase);
     QJsonObject jsonObj;
     QJsonArray jsonarray;
     jsonObj["name"]=main_user.getUsername();
@@ -360,7 +360,6 @@ void MainWindow::updatemain_user()
     for(int i=0; i < main_user.getPurchase().size();i++){
         QJsonObject jsonObj2;
         QJsonArray jsonarray2;
-        qDebug() << main_user.getPurchase()[i].getChart().size();
         for(int j=0; j < main_user.getPurchase()[i].getChart().size();j++){
            QJsonObject jsonObj3;
            jsonObj3["id"]=main_user.getPurchase()[i].getChart()[j].getId();
@@ -371,8 +370,5 @@ void MainWindow::updatemain_user()
         jsonarray.append(jsonObj2);
     }
     jsonObj["purchase"]=jsonarray;
-
    dbArray.append(jsonObj);
-
-
 }

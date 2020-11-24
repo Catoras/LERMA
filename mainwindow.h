@@ -3,10 +3,11 @@
 
 #include "productwidget.h"
 #include "product.h"
+#include "user.h"
+#include "Graph.h"
 
 #include <QMainWindow>
 #include <QMessageBox>
-#include "user.h"
 #include <regex>
 #include <QAction>
 #include <QFile>
@@ -16,9 +17,6 @@
 #include <QJsonDocument>
 #include <string.h>
 #include <QObject>
-
-#include <QDebug>
-
 #include <QDateTime>
 
 
@@ -60,8 +58,6 @@ private slots:
 
     void addToChart(QString productID,int amount);
 
-    void updatemain_user();
-
 private:
     Ui::MainWindow *ui;
     vector<User> users;
@@ -69,7 +65,6 @@ private:
     QFile dbFile;
     QJsonArray dbArray;
     QJsonArray dbProductsArray;
-    User main_user;
     string departments[6]{"Todos los departamentos",
                           "Alimentos y Bebidas",
                           "Libros",
@@ -87,8 +82,9 @@ private:
     string sorts[3]{"Ordenar",
                     "Ascendente",
                     "Descendente"};
-
+    User main_user;
     Purchase actual_purchase;
+    Graph<string> shopping_network;
     void enableLoginPB();
     void enableSignInPB();
     void validateUser();
@@ -98,5 +94,6 @@ private:
     void loadDB();
     void productfilter();
     void printitems(vector<Product> &array);
+    void update_main_user();
 };
 #endif // MAINWINDOW_H

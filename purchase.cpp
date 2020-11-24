@@ -27,5 +27,4 @@ void Purchase::addproduct(Product_From_Purchase product)
 
 Purchase::Purchase()
 {
-    //timestamp=QDateTime::currentDateTime().toString();
 }
