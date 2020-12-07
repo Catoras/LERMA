@@ -75,7 +75,8 @@ void MainWindow::validateUser()
         ui->viewSW->setCurrentIndex(1);
         ui->menubar->setVisible(0);
         printitems(products);
-
+        vector<Product> vectorofrecommendations = generaterandomrecommendations(5);
+        printrecommendations(vectorofrecommendations);
         message.exec();
 
     }
@@ -91,8 +92,50 @@ void MainWindow::printitems(vector<Product> &array)
        productwidget *product= new productwidget(this,
         array[i].getId(),array[i].getName(),array[i].getPrice());
        connect(product, SIGNAL(addItem(QString,int)),this, SLOT(addToChart(QString,int)));
+       connect(product, SIGNAL(updaterecommendations(QString)),this, SLOT(updaterecommendations(QString)));
        layout->addWidget(product,i/4,i%4,Qt::AlignCenter);
     }
+}
+
+void MainWindow::printrecommendations(vector<Product> &array)
+{
+    QWidget *central = new QWidget;
+    QGridLayout *layout = new QGridLayout(central);
+    ui->scrollAreaRecomendaciones->setWidget(central);
+    ui->scrollAreaRecomendaciones->setWidgetResizable(true);
+    for(int i = 0; i < array.size();i++){
+       productwidget *product= new productwidget(this,
+        array[i].getId(),array[i].getName(),array[i].getPrice());
+       connect(product, SIGNAL(addItem(QString,int)),this,
+               SLOT(addToChart(QString,int)));
+       connect(product, SIGNAL(updaterecommendations(QString)),this,
+               SLOT(updaterecommendations(QString)));
+       layout->addWidget(product,i/5,i%5,Qt::AlignCenter);
+    }
+}
+
+vector<Product> MainWindow::generaterandomrecommendations(int quantity)
+{
+    uniform_int_distribution<int> distribution(0,products.size()-1);
+    vector <Product> vectorRecommendations;
+
+    for(int i = 0 ; i < quantity ;i++){
+        vector<Product>::iterator it;
+        Product RandomProduct= products.at(distribution(*QRandomGenerator::global()));
+        it = find_if(vectorRecommendations.begin(),vectorRecommendations.end(),
+                     [&RandomProduct] (Product producto) -> bool
+        {
+            if(producto.getId()==RandomProduct.getId()){
+                return true;
+            }
+            return false;
+        });
+        if(it == vectorRecommendations.end())
+            vectorRecommendations.push_back(RandomProduct);
+        else
+            i--;
+    }
+    return vectorRecommendations;
 }
 
 
@@ -370,5 +413,49 @@ void MainWindow::update_main_user()
         jsonarray.append(jsonObj2);
     }
     jsonObj["purchase"]=jsonarray;
-   dbArray.append(jsonObj);
+    dbArray.append(jsonObj);
+}
+//https://stackoverflow.com/questions/4485203/c-stl-using-map-with-priority-queue
+void MainWindow::updaterecommendations(QString productID)
+{
+    vector<Product> better_recommendations;
+    priority_queue<PAIR,vector<PAIR>,cmp> temp;
+    vector<Product> random_recommendations;
+    unordered_set<string> filtervectorwithoutduplicades;
+    vector<string> vectorproductid;
+
+    if(shopping_network.contains(productID.toStdString())){
+        map<string,int> Neighbors = shopping_network.getNeighbors(productID.toStdString());
+        map<string,int>::iterator it = Neighbors.begin();
+        while(it != Neighbors.end()){
+            PAIR par(it->first,it->second);
+            recommendations.push(par);
+            it++;
+        }
+    }
+    temp=recommendations;
+    qDebug() << temp.size();
+    qDebug() << recommendations.size();
+    for(int i=0;i<temp.size();i++){
+        if(filtervectorwithoutduplicades.size()==5)
+            break;
+        filtervectorwithoutduplicades.insert(temp.top().first);
+        temp.pop();
+    }
+    qDebug() << filtervectorwithoutduplicades.size();
+    vectorproductid.assign(filtervectorwithoutduplicades.begin(), filtervectorwithoutduplicades.end());
+    qDebug() << vectorproductid.size();
+    for(int i =0;i < vectorproductid.size();i++){
+        string idfromrecommendations = vectorproductid[i];
+        copy_if(products.begin(), products.end(), std::back_inserter(better_recommendations),
+                [idfromrecommendations](const Product& c)
+        { return c.getId().toStdString() == idfromrecommendations; });
+    }
+    qDebug() << better_recommendations.size();
+    random_recommendations= generaterandomrecommendations(5-better_recommendations.size());
+    for(int i = 0; i < random_recommendations.size() ; i++){
+        better_recommendations.push_back(random_recommendations[i]);
+    }
+
+    printrecommendations(better_recommendations);
 }

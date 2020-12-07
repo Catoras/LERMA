@@ -18,6 +18,10 @@
 #include <string.h>
 #include <QObject>
 #include <QDateTime>
+#include <queue>
+#include <QRandomGenerator>
+
+#include <QDebug>
 
 
 
@@ -58,6 +62,8 @@ private slots:
 
     void addToChart(QString productID,int amount);
 
+    void updaterecommendations(QString productID);
+
 private:
     Ui::MainWindow *ui;
     vector<User> users;
@@ -85,6 +91,14 @@ private:
     User main_user;
     Purchase actual_purchase;
     Graph<string> shopping_network;
+    typedef pair<string, int> PAIR;
+    struct cmp {
+            bool operator()(const PAIR &a, const PAIR &b) {
+                return a.second < b.second;
+            };
+    };
+    priority_queue<PAIR,vector<PAIR>,cmp> recommendations;
+
     void enableLoginPB();
     void enableSignInPB();
     void validateUser();
@@ -94,6 +108,9 @@ private:
     void loadDB();
     void productfilter();
     void printitems(vector<Product> &array);
+    void printrecommendations(vector<Product> &array);
+    vector<Product>generaterandomrecommendations(int quantity);
     void update_main_user();
+
 };
 #endif // MAINWINDOW_H

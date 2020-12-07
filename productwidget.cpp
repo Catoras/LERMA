@@ -36,6 +36,7 @@ void productwidget::on_pushButton_clicked()
 {
     emit addItem(productID,ui->spinBox->value());
     ui->spinBox->setValue(0);
+    emit updaterecommendations(productID);
 }
 
 void productwidget::on_spinBox_valueChanged(int arg1)

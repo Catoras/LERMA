@@ -19,6 +19,8 @@ public:
 signals:
     void addItem(QString id,int amount);
 
+    void updaterecommendations(QString id);
+
 private slots:
     void on_pushButton_clicked();
 
